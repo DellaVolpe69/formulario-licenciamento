@@ -236,11 +236,11 @@ with st.sidebar:
 if st.session_state.page == "add":
     st.subheader("Cadastrar novo licenciamento")
 
-    data_recebimento = st.date_input("Nome do Motorista")
-    data_entrega = st.date_input("Número do Agregado")
+    data_recebimento = st.date_input("Data recebimento")
+    data_entrega = st.date_input("Data entrega")
     placa = st.text_input("Placa")
-    responsavel_pela_entrega = st.text_input("Operação")
-    responsavel_pelo_recebimento = st.text_input("Data de Vencimento")
+    responsavel_pela_entrega = st.text_input("Responsável pela entrega")
+    responsavel_pelo_recebimento = st.text_input("Responsável pelo recebimento")
     obs = st.text_input("Observação:")
     meio_comunicacao = st.text_input("Meio de Comunicação")
 
@@ -347,4 +347,5 @@ if st.session_state.page == "edit":
                 st.session_state.registro_encontrado = None
 
 rodape()
+
 
