@@ -240,7 +240,7 @@ if st.session_state.page == "add":
     data_entrega = st.date_input("Número do Agregado")
     placa = st.text_input("Placa")
     responsavel_pela_entrega = st.text_input("Operação")
-    responsavel_pelo_recebimento = st.text_input_input("Data de Vencimento")
+    responsavel_pelo_recebimento = st.text_input("Data de Vencimento")
     obs = st.text_input("Observação:")
     meio_comunicacao = st.text_input("Meio de Comunicação")
 
