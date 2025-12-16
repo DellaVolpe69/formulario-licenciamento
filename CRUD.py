@@ -86,7 +86,7 @@ def bp_existe(PLACA):
     
     return len(result.data) > 0
 
-def buscar_por_bp(PLACA):
+def buscar_por_placa(PLACA):
     result = supabase.table("LICENCIAMENTO") \
         .select("*") \
         .eq("PLACA", PLACA) \
@@ -96,7 +96,7 @@ def buscar_por_bp(PLACA):
         return result.data[0]
     return None
 
-def atualizar_registro_por_bp(PLACA,DATA_RECEBIMENTO, DATA_ENTREGA, RESPONSAVEL_PELA_ENTREGA, RESPONSAVEL_PELA_RECEBIMENTO, OBS, MEIO_COMUNICACAO):
+def atualizar_registro_por_placa(PLACA,DATA_RECEBIMENTO, DATA_ENTREGA, RESPONSAVEL_PELA_ENTREGA, RESPONSAVEL_PELA_RECEBIMENTO, OBS, MEIO_COMUNICACAO):
     supabase.table("LICENCIAMENTO").update({
         "PLACA": PLACA,
         "DATA_RECEBIMENTO": DATA_RECEBIMENTO,
@@ -109,7 +109,7 @@ def atualizar_registro_por_bp(PLACA,DATA_RECEBIMENTO, DATA_ENTREGA, RESPONSAVEL_
 
     st.success("✏️ Registro atualizado com sucesso!")
 
-def deletar_registro_por_bp(PLACA):
+def deletar_registro_por_placa(PLACA):
     supabase.table("LICENCIAMENTO").delete().eq("PLACA", PLACA).execute()
     st.success("🗑️ Registro deletado com sucesso!")
 
@@ -236,11 +236,11 @@ with st.sidebar:
 if st.session_state.page == "add":
     st.subheader("Cadastrar novo licenciamento")
 
-    data_recebimento = st.date_input("Data recebimento")
-    data_entrega = st.date_input("Data entrega")
+    data_recebimento = st.date_input("Nome do Motorista")
+    data_entrega = st.date_input("Número do Agregado")
     placa = st.text_input("Placa")
-    responsavel_pela_entrega = st.text_input("Responsável pela entrega")
-    responsavel_pelo_recebimento = st.text_input("Responsável pelo recebimento")
+    responsavel_pela_entrega = st.text_input("Operação")
+    responsavel_pelo_recebimento = st.text_input_input("Data de Vencimento")
     obs = st.text_input("Observação:")
     meio_comunicacao = st.text_input("Meio de Comunicação")
 
@@ -289,7 +289,7 @@ if st.session_state.page == "edit":
             st.dataframe(df, use_container_width=True)
 
     if st.button("Buscar"):
-        registro = buscar_por_bp(bp_busca)
+        registro = buscar_por_placa(bp_busca)
         st.session_state.registro_encontrado = registro
 
         if not registro:
@@ -327,7 +327,7 @@ if st.session_state.page == "edit":
 
         with col1:
             if st.button("Salvar alterações"):
-                atualizar_registro_por_bp(
+                atualizar_registro_por_placa(
                     bp_original,
                     new_data_recebimento,
                     new_data_entrega,
@@ -342,10 +342,8 @@ if st.session_state.page == "edit":
 
         with col2:
             if st.button("Excluir registro"):
-                deletar_registro_por_bp(bp_original)
+                deletar_registro_por_placa(bp_original)
                 st.success("Registro excluído com sucesso!")
                 st.session_state.registro_encontrado = None
 
 rodape()
-
-
