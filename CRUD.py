@@ -65,11 +65,19 @@ def carregar_dados():
     data = supabase.table("LICENCIAMENTO").select("*").execute()
     return pd.DataFrame(data.data)
 
-def adicionar_registro(PLACA,DATA_RECEBIMENTO, DATA_ENTREGA, RESPONSAVEL_PELA_ENTREGA, RESPONSAVEL_PELA_RECEBIMENTO, OBS, MEIO_COMUNICACAO):
+def adicionar_registro(
+    PLACA,
+    DATA_RECEBIMENTO,
+    DATA_ENTREGA,
+    RESPONSAVEL_PELA_ENTREGA,
+    RESPONSAVEL_PELA_RECEBIMENTO,
+    OBS,
+    MEIO_COMUNICACAO
+):
     supabase.table("LICENCIAMENTO").insert({
         "PLACA": PLACA,
-        "DATA_RECEBIMENTO": DATA_RECEBIMENTO,
-        "DATA_ENTREGA": DATA_ENTREGA,
+        "DATA_RECEBIMENTO": DATA_RECEBIMENTO.isoformat() if DATA_RECEBIMENTO else None,
+        "DATA_ENTREGA": DATA_ENTREGA.isoformat() if DATA_ENTREGA else None,
         "RESPONSAVEL_PELA_ENTREGA": RESPONSAVEL_PELA_ENTREGA,
         "RESPONSAVEL_PELA_RECEBIMENTO": RESPONSAVEL_PELA_RECEBIMENTO,
         "OBS": OBS,
@@ -96,11 +104,18 @@ def buscar_por_placa(PLACA):
         return result.data[0]
     return None
 
-def atualizar_registro_por_placa(PLACA,DATA_RECEBIMENTO, DATA_ENTREGA, RESPONSAVEL_PELA_ENTREGA, RESPONSAVEL_PELA_RECEBIMENTO, OBS, MEIO_COMUNICACAO):
+def atualizar_registro_por_placa(
+    PLACA,
+    DATA_RECEBIMENTO,
+    DATA_ENTREGA,
+    RESPONSAVEL_PELA_ENTREGA,
+    RESPONSAVEL_PELA_RECEBIMENTO,
+    OBS,
+    MEIO_COMUNICACAO
+):
     supabase.table("LICENCIAMENTO").update({
-        "PLACA": PLACA,
-        "DATA_RECEBIMENTO": DATA_RECEBIMENTO,
-        "DATA_ENTREGA": DATA_ENTREGA,
+        "DATA_RECEBIMENTO": DATA_RECEBIMENTO.isoformat() if DATA_RECEBIMENTO else None,
+        "DATA_ENTREGA": DATA_ENTREGA.isoformat() if DATA_ENTREGA else None,
         "RESPONSAVEL_PELA_ENTREGA": RESPONSAVEL_PELA_ENTREGA,
         "RESPONSAVEL_PELA_RECEBIMENTO": RESPONSAVEL_PELA_RECEBIMENTO,
         "OBS": OBS,
@@ -252,15 +267,15 @@ if st.session_state.page == "add":
             st.error("⚠️ Essa Placa já existe! Vá na aba EDITAR para alterá-la")
             
         else:
-            adicionar_registro(
-                data_recebimento,
-                data_entrega,
-                placa,
-                responsavel_pela_entrega,
-                responsavel_pelo_recebimento,
-                obs,
-                meio_comunicacao
-            )
+           adicionar_registro(
+            placa,
+            data_recebimento,
+            data_entrega,
+            responsavel_pela_entrega,
+            responsavel_pelo_recebimento,
+            obs,
+            meio_comunicacao
+)
 rodape()
 
 # ===================================================
@@ -331,7 +346,6 @@ if st.session_state.page == "edit":
                     bp_original,
                     new_data_recebimento,
                     new_data_entrega,
-                    new_placa,
                     new_operacao,
                     new_data_vencimento,
                     new_obs,
