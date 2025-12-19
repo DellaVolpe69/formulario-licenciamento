@@ -66,7 +66,7 @@ def carregar_dados():
     return pd.DataFrame(data.data)
 
 def adicionar_registro(
-    PLACA,
+    placa,
     DATA_RECEBIMENTO,
     DATA_ENTREGA,
     RESPONSAVEL_PELA_ENTREGA,
@@ -75,7 +75,7 @@ def adicionar_registro(
     MEIO_COMUNICACAO
 ):
     supabase.table("LICENCIAMENTO").insert({
-        "PLACA": PLACA,
+        "placa": placa,  # 👈 coluna : variável
         "DATA_RECEBIMENTO": DATA_RECEBIMENTO.isoformat() if DATA_RECEBIMENTO else None,
         "DATA_ENTREGA": DATA_ENTREGA.isoformat() if DATA_ENTREGA else None,
         "RESPONSAVEL_PELA_ENTREGA": RESPONSAVEL_PELA_ENTREGA,
@@ -86,26 +86,28 @@ def adicionar_registro(
 
     st.success("✅ Registro adicionado com sucesso!")
 
-def bp_existe(PLACA):
+
+def placa_existe(placa):
     result = supabase.table("LICENCIAMENTO") \
-        .select("PLACA") \
-        .eq("PLACA", PLACA) \
+        .select("placa") \
+        .eq("placa", placa) \
         .execute()
     
     return len(result.data) > 0
 
-def buscar_por_placa(PLACA):
+def buscar_por_placa(placa):
     result = supabase.table("LICENCIAMENTO") \
         .select("*") \
-        .eq("PLACA", PLACA) \
+        .eq("placa", placa) \
         .execute()
 
     if result.data:
         return result.data[0]
     return None
 
+
 def atualizar_registro_por_placa(
-    PLACA,
+    placa,
     DATA_RECEBIMENTO,
     DATA_ENTREGA,
     RESPONSAVEL_PELA_ENTREGA,
@@ -120,12 +122,17 @@ def atualizar_registro_por_placa(
         "RESPONSAVEL_PELA_RECEBIMENTO": RESPONSAVEL_PELA_RECEBIMENTO,
         "OBS": OBS,
         "MEIO_COMUNICACAO": MEIO_COMUNICACAO
-    }).eq("PLACA", PLACA).execute()
+    }).eq("placa", placa).execute()
 
     st.success("✏️ Registro atualizado com sucesso!")
 
-def deletar_registro_por_placa(PLACA):
-    supabase.table("LICENCIAMENTO").delete().eq("PLACA", PLACA).execute()
+
+def deletar_registro_por_placa(placa):
+    supabase.table("LICENCIAMENTO") \
+        .delete() \
+        .eq("placa", placa) \
+        .execute()
+
     st.success("🗑️ Registro deletado com sucesso!")
 
 # ---------------------------------------------------
@@ -263,7 +270,7 @@ if st.session_state.page == "add":
         if not (placa and data_recebimento and data_entrega and responsavel_pela_entrega and responsavel_pelo_recebimento and meio_comunicacao):
             st.warning("⚠️ Preencha todos os campos antes de salvar.")
 
-        elif bp_existe(placa):
+        elif placa_existe(placa):
             st.error("⚠️ Essa Placa já existe! Vá na aba EDITAR para alterá-la")
             
         else:
@@ -315,11 +322,12 @@ if st.session_state.page == "edit":
 
         st.subheader("✏️ Editar informações")
 
-        bp_original = r["PLACA"]
+        bp_original = r["placa"]
 
         new_data_recebimento = st.date_input(
             "Data de Recebimento",
-            value=pd.to_datetime(r["DATA_RECEBIMENTO"])
+            value=pd.to_datetime(r["DATA_RECEBIMENTO"]) if r["DATA_RECEBIMENTO"] else None
+
         )
 
         new_data_entrega = st.date_input(
@@ -327,7 +335,7 @@ if st.session_state.page == "edit":
             value=pd.to_datetime(r["DATA_ENTREGA"])
         )
 
-        new_placa = st.text_input("Placa", r["PLACA"])
+        new_placa = st.text_input("Placa", r["placa"])
         new_operacao = st.text_input("Operação", r["RESPONSAVEL_PELA_ENTREGA"])
 
         new_data_vencimento = st.date_input(
